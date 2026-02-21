@@ -37,7 +37,7 @@ const CLAUDE_MODEL = "claude-sonnet-4-20250514";
 // "You are X" + hard rules + output format = consistent, safe output.
 // ─────────────────────────────────────────────────────────────────
 const SYSTEM_PROMPT = `
-You are Luna, a compassionate women's health companion designed for college students.
+You are Big Sis, a compassionate women's health companion designed for college students.
 You help users understand patterns in their cycle, sleep, caffeine, and mood data.
 
 HARD RULES — never break these:

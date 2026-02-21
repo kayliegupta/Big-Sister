@@ -1,66 +1,135 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CalendarView from "../components/CalendarView";
-import HormonesView from "../components/HormonesView";
+import PieChart     from "../components/PieChart";
+import { getLatestCycleRecord, saveCycleRecord } from "../utils/storageLayer.js";
+import { createCycleRecord } from "../utils/dataModels.js";
+import { getCycleDay, getCyclePhase, predictNextPeriod } from "../utils/cycleCalculator.js";
 import "./HomePage.css";
 
-// Mock data — replace with storageLayer.js calls
-const TODAY = new Date();
-const MONTH = TODAY.toLocaleString("default", { month: "short" });
-const DAY   = TODAY.getDate();
-const DAYS_TILL_NEXT = 8; // replace with predictNextPeriod() from cycleCalculator.js
-const CURRENT_PHASE = { name: "Luteal", color: "#C4B8D8" };
+const PHASE_COLORS = {
+  Menstrual:  "#FBBDD0",
+  Follicular: "#FAE4A0",
+  Ovulation:  "#A8DDD8",
+  Luteal:     "#D8C8F0",
+};
 
-export default function HomePage({ onTrackToday, onGetAdvice }) {
-  const [tab, setTab] = useState("calendar"); // "calendar" | "hormones"
+export default function HomePage() {
+  const [tab, setTab]               = useState("calendar");
+  const [cycleRecord, setCycleRecord] = useState(null);
+  const [showSetup, setShowSetup]   = useState(false);
+  const [cycleInput, setCycleInput] = useState("");
+
+  // Compute today inside the component so it's always fresh
+  const today    = new Date();
+  const month    = today.toLocaleString("default", { month: "short" });
+  const day      = today.getDate();
+  const todayStr = today.toISOString().split("T")[0];
+
+  useEffect(() => {
+    const r = getLatestCycleRecord();
+    setCycleRecord(r);
+    if (!r) setShowSetup(true);
+  }, []);
+
+  const saveCycle = () => {
+    if (!cycleInput) return;
+    const r = createCycleRecord({ periodStartDate: cycleInput, cycleLength: 28 });
+    saveCycleRecord(r);
+    setCycleRecord(r);
+    setShowSetup(false);
+  };
+
+  // All of these derive from cycleRecord — update automatically when it changes
+  const cycleDay   = cycleRecord ? getCycleDay(cycleRecord.periodStartDate) : null;
+  const phase      = (cycleDay && cycleDay >= 1)
+    ? getCyclePhase(cycleDay, cycleRecord.cycleLength || 28)
+    : null;
+  const nextPeriod = cycleRecord
+    ? predictNextPeriod(cycleRecord.periodStartDate, cycleRecord.cycleLength || 28)
+    : null;
+  const daysTill   = nextPeriod
+    ? Math.max(0, Math.round((new Date(nextPeriod) - today) / 86400000))
+    : "—";
 
   return (
     <div className="page home-page">
-      {/* ── HEADER ── */}
-      <div className="header fade-up fade-up-1">
-        <div className="date-circle">
-          <span className="month">{MONTH}</span>
-          <span className="day">{DAY}</span>
-        </div>
 
-        <div className="header-center">
-          <button className="btn-primary track-btn" onClick={onTrackToday}>
-            Track Today
-          </button>
-          <div className="phase-pill fade-up fade-up-2" style={{ background: CURRENT_PHASE.color + "55", color: "#2C2C2C", marginTop: 8 }}>
-            <span style={{ width: 7, height: 7, borderRadius: "50%", background: CURRENT_PHASE.color, display: "inline-block" }} />
-            {CURRENT_PHASE.name} Phase
+      {/* ── CYCLE SETUP BANNER ── */}
+      {showSetup && (
+        <div className="setup-banner fade-up delay-1">
+          <p className="setup-q">When did your last period start?</p>
+          <div className="setup-row">
+            <input
+              type="date"
+              className="setup-input"
+              value={cycleInput}
+              max={todayStr}
+              onChange={e => setCycleInput(e.target.value)}
+            />
+            <button
+              className="btn-primary"
+              style={{ padding: "8px 18px", fontSize: 13 }}
+              onClick={saveCycle}
+              disabled={!cycleInput}
+            >
+              Set
+            </button>
           </div>
         </div>
+      )}
 
-        <div className="next-cycle fade-up fade-up-2">
-          <span className="next-cycle-label">Days till</span>
-          <span className="next-cycle-label">next cycle</span>
-          <span className="next-cycle-number">{DAYS_TILL_NEXT}</span>
+      {/* ── HEADER ── */}
+      <div className="home-header fade-up delay-1">
+
+        {/* Teal date circle */}
+        <div className="date-circle">
+          <span className="date-top">Today</span>
+          <span className="date-val">{month} {day}</span>
         </div>
+
+        {/* Center — phase badge OR set date prompt */}
+        <div className="header-mid">
+          {phase ? (
+            <button
+              className="phase-badge"
+              style={{ background: PHASE_COLORS[phase.name] }}
+              onClick={() => setShowSetup(true)}
+              title="Tap to update cycle date"
+            >
+              {phase.name} Phase
+            </button>
+          ) : (
+            <button className="btn-ghost set-date-btn" onClick={() => setShowSetup(true)}>
+              + Set cycle date
+            </button>
+          )}
+        </div>
+
+        {/* Pink days-till card */}
+        <div className="days-card">
+          <span className="days-top">Next cycle</span>
+          <span className="days-num">{daysTill}</span>
+          <span className="days-bottom">days</span>
+        </div>
+
       </div>
 
       {/* ── TABS ── */}
-      <div className="tabs fade-up fade-up-3">
+      <div className="tabs fade-up delay-2">
         <button className={`tab ${tab === "calendar" ? "active" : ""}`} onClick={() => setTab("calendar")}>
           Calendar
         </button>
-        <button className={`tab ${tab === "hormones" ? "active" : ""}`} onClick={() => setTab("hormones")}>
-          Hormones
+        <button className={`tab ${tab === "cycle" ? "active" : ""}`} onClick={() => setTab("cycle")}>
+          Cycle
         </button>
       </div>
 
       {/* ── TAB CONTENT ── */}
-      <div className="tab-content fade-up fade-up-4">
-        {tab === "calendar" && <CalendarView />}
-        {tab === "hormones" && <HormonesView />}
+      <div className="fade-up delay-3">
+        {tab === "calendar" && <CalendarView cycleRecord={cycleRecord} />}
+        {tab === "cycle"    && <PieChart cycleRecord={cycleRecord} currentPhaseName={phase?.name} />}
       </div>
 
-      {/* ── GET ADVICE BUTTON ── */}
-      <div className="advice-row fade-up fade-up-5">
-        <button className="btn-primary get-advice-btn" onClick={onGetAdvice}>
-          ✦ Get Advice
-        </button>
-      </div>
     </div>
   );
 }

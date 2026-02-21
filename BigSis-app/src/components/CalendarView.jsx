@@ -1,75 +1,78 @@
 import "./CalendarView.css";
+import { getCycleDay, getCyclePhase } from "../utils/cycleCalculator.js";
 
-// Phase color map — matches cycleCalculator.js CYCLE_PHASES
 const PHASE_COLORS = {
-  Menstrual:  "#F2C4C4",
-  Follicular: "#F5DFA0",
-  Ovulation:  "#B8D4B8",
-  Luteal:     "#C4B8D8",
+  Menstrual:  "#FBBDD0",
+  Follicular: "#FAE4A0",
+  Ovulation:  "#A8DDD8",
+  Luteal:     "#D8C8F0",
 };
 
-// Generate days for current month with mock phase data
-// In production: replace with generateCalendarData() from cycleCalculator.js
-function getMockCalendarDays() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDayOfWeek = new Date(year, month, 1).getDay();
-  const todayDate = today.getDate();
+const WEEKDAYS = ["Su","Mo","Tu","We","Th","Fr","Sa"];
 
-  // Mock: period started on day 5 of this month, 28-day cycle
-  const getPhase = (day) => {
-    if (day >= 1 && day <= 5)   return "Menstrual";
-    if (day >= 6 && day <= 13)  return "Follicular";
-    if (day >= 14 && day <= 16) return "Ovulation";
-    return "Luteal";
-  };
-
-  const days = [];
-  // Empty cells for days before the 1st
-  for (let i = 0; i < firstDayOfWeek; i++) {
-    days.push({ empty: true });
-  }
-  for (let d = 1; d <= daysInMonth; d++) {
-    days.push({ day: d, phase: getPhase(d), isToday: d === todayDate });
-  }
-  return days;
+// Format a Date as "YYYY-MM-DD" in local time (avoids UTC timezone drift)
+function toLocalDateStr(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
-const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+export default function CalendarView({ cycleRecord }) {
+  const today        = new Date();
+  const year         = today.getFullYear();
+  const month        = today.getMonth();
+  const daysInMonth  = new Date(year, month + 1, 0).getDate();
+  const firstDayOfWeek = new Date(year, month, 1).getDay();
+  const todayDate    = today.getDate();
+  const monthLabel   = today.toLocaleString("default", { month: "long", year: "numeric" });
+  const cycleLength  = cycleRecord?.cycleLength || 28;
 
-export default function CalendarView() {
-  const days = getMockCalendarDays();
-  const today = new Date();
-  const monthLabel = today.toLocaleString("default", { month: "long", year: "numeric" });
+  // For each calendar day, compute its phase from the real cycle start date
+  const getPhaseForDay = (dayNum) => {
+    if (!cycleRecord?.periodStartDate) return null;
+    const dateStr  = toLocalDateStr(new Date(year, month, dayNum));
+    const cycleDay = getCycleDay(cycleRecord.periodStartDate, dateStr);
+    // Negative cycleDay means the date is before the period start — no phase yet
+    if (cycleDay < 1) return null;
+    return getCyclePhase(cycleDay, cycleLength);
+  };
+
+  const cells = [];
+  for (let i = 0; i < firstDayOfWeek; i++) cells.push({ empty: true });
+  for (let d = 1; d <= daysInMonth; d++) {
+    const phase = getPhaseForDay(d);
+    cells.push({ day: d, phase, isToday: d === todayDate });
+  }
 
   return (
-    <div className="calendar-card card">
-      <div className="calendar-header">
-        <span className="calendar-month">{monthLabel}</span>
-        <div className="phase-legend">
-          {Object.entries(PHASE_COLORS).map(([phase, color]) => (
-            <span key={phase} className="legend-item">
-              <span className="legend-dot" style={{ background: color }} />
-              <span className="legend-label">{phase.slice(0, 3)}</span>
+    <div className="calendar-wrap card">
+      <div className="cal-header">
+        <span className="cal-month">{monthLabel}</span>
+        <div className="cal-legend">
+          {Object.entries(PHASE_COLORS).map(([p, c]) => (
+            <span key={p} className="leg-item">
+              <span className="leg-dot" style={{ background: c }} />
+              <span className="leg-text">{p.slice(0, 3)}</span>
             </span>
           ))}
         </div>
       </div>
 
-      {/* Weekday labels */}
-      <div className="calendar-grid">
-        {WEEKDAYS.map((d) => (
-          <div key={d} className="weekday-label">{d}</div>
-        ))}
+      {!cycleRecord && (
+        <p className="cal-no-data">Set your cycle date on the Home tab to see phase colors.</p>
+      )}
 
-        {/* Day cells */}
-        {days.map((d, i) => (
-          <div key={i} className={`day-cell ${d.empty ? "empty" : ""} ${d.isToday ? "today" : ""}`}
-            style={d.phase && !d.empty ? { background: PHASE_COLORS[d.phase] } : {}}>
-            {!d.empty && <span className="day-num">{d.day}</span>}
-            {d.isToday && <span className="today-dot" />}
+      <div className="cal-grid">
+        {WEEKDAYS.map(d => <div key={d} className="cal-weekday">{d}</div>)}
+        {cells.map((c, i) => (
+          <div
+            key={i}
+            className={`cal-day ${c.empty ? "empty" : ""} ${c.isToday ? "today" : ""}`}
+            style={!c.empty && c.phase ? { background: PHASE_COLORS[c.phase.name] } : {}}
+          >
+            {!c.empty && <span className="cal-num">{c.day}</span>}
+            {c.isToday && <span className="today-ring" />}
           </div>
         ))}
       </div>
