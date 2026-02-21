@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --cream: #FAF7F2;
+  --warm-white: #FFFDF9;
+  --blush: #F2C4C4;
+  --blush-dark: #E8A5A5;
+  --rose: #C96B6B;
+  --terracotta: #C4724A;
+  --sage: #8FAF8F;
+  --sage-light: #C8DCC8;
+  --lavender: #C4B8D8;
+  --amber: #D4A85A;
+  --charcoal: #2C2C2C;
+  --mid: #6B6B6B;
+  --light: #A8A8A8;
+  --border: #E8E0D5;
+
+  --phase-menstrual: #E8A5A5;
+  --phase-follicular: #F5C876;
+  --phase-ovulation: #8FAF8F;
+  --phase-luteal: #C4B8D8;
+
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.10);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--charcoal);
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  min-height: 100vh;
+  background: var(--cream);
+}
+
+/* ── TYPOGRAPHY ── */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--warm-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+}
+
+/* ── BUTTONS ── */
+.btn-primary {
+  background: var(--charcoal);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 12px 28px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.02em;
+}
+.btn-primary:hover {
+  background: var(--rose);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--charcoal);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 10px 24px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-secondary:hover {
+  border-color: var(--charcoal);
+  background: rgba(0,0,0,0.02);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--mid);
+  border: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+}
+.btn-ghost:hover {
+  color: var(--charcoal);
+  background: rgba(0,0,0,0.04);
+}
+
+/* ── PAGE CONTAINER ── */
+.page {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+  min-height: 100vh;
+}
+
+/* ── HEADER BAR ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0 16px;
+}
+
+/* ── DATE CIRCLE ── */
+.date-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--blush);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.date-circle .month {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--rose);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.date-circle .day {
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1;
+  color: var(--charcoal);
+}
+
+/* ── PHASE PILL ── */
+.phase-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+/* ── TABS ── */
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(0,0,0,0.04);
+  border-radius: var(--radius-full);
+  margin: 16px 0;
+}
+.tab {
+  flex: 1;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--mid);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tab.active {
+  background: white;
+  color: var(--charcoal);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  animation: fadeUp 0.35s ease forwards;
+}
+.fade-up-1 { animation-delay: 0.05s; opacity: 0; }
+.fade-up-2 { animation-delay: 0.10s; opacity: 0; }
+.fade-up-3 { animation-delay: 0.15s; opacity: 0; }
+.fade-up-4 { animation-delay: 0.20s; opacity: 0; }
+.fade-up-5 { animation-delay: 0.25s; opacity: 0; }
