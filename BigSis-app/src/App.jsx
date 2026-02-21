@@ -7,7 +7,7 @@ import AdvicePage     from "./pages/AdvicePage";
 import "./App.css";
 
 const NAV = [
-  { id: "home",     icon: "🏠", label: "Home" },
+  { id: "home",     icon: "...", label: "Home" },
   { id: "track",    icon: "＋", label: "Track",   center: true },
   { id: "hormones", icon: "🧪", label: "Lab" },
   { id: "advice",   icon: "💬", label: "Advice" },
