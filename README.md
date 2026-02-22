@@ -1,87 +1,20 @@
-# Luna — Women's Wellness Tracker
+# Big Sister — Women's Health & Wellness Tracker
 
-## Setup (3 commands)
+# Women’s health is severely understudied. When information does exist, it is oftentime largely inaccessible, making it difficult for women to stay well-informed about their bodies. As college women, we are over-scheduled and under-rested. While most tracking applications rely on routine to predict and advise, ours understands that every day looks different. 
 
-```bash
-npm create vite@latest luna-app -- --template react
-cd luna-app
-npm install
-```
+# We built Big Sister, the first all-in-one health ecosystem that treats your cycle, lifestyle habits, and hormonal symptoms as part of the same story.
 
-## Where to put the files
+# While other apps exist to track cycles or hormones, they’re either
+# Pink Taxed with a paywall
+# Expecting fixed routine for predictability
+# Boring to use
 
-After running those 3 commands, your folder will look like this.
-Replace/add files exactly as shown:
+# Our solution is Big-Sister, who understands college life means constant change. 
+# We included Integrated tracking - cycle, sleep, caffeine, mood and more to give an in depth view of # your well-being, Hormone tracking to get extra insight into possible fluctuations provided you have a lab test, and Big-Sis, the AI agent to give actionable advice and realistic insight into why you might be feeling off. This is a quick, easy-to-understand, women-focused tool that can be incorporated into everyone’s daily routine. 
+ 
+# We wanted to increase women’s access to information about their personal health, menstrual health, and overall well-being, specifically targeting college-age women. Many period and hormone tracker apps exist, but many of them are paywalled or only support limited features. This forces women to manage multiple apps at once to get the information about their bodies they need. In response, we created Big Sister, an all-in-one period and hormone-tracking app. Big Sister allows you to track your period and hormones, receive information and predictions about your cycle, and receive “Big Sister” advice relating to your personal health.
 
-```
-luna-app/
-├── index.html              ← leave as-is (Vite generates this)
-├── package.json            ← leave as-is
-├── vite.config.js          ← leave as-is
-│
-└── src/
-    ├── main.jsx            ← REPLACE with our main.jsx
-    ├── App.jsx             ← REPLACE with our App.jsx
-    ├── App.css             ← REPLACE with our App.css
-    │
-    ├── pages/
-    │   ├── HomePage.jsx    ← ADD
-    │   ├── HomePage.css    ← ADD
-    │   ├── TrackTodayPage.jsx  ← ADD
-    │   ├── TrackTodayPage.css  ← ADD
-    │   ├── AdvicePage.jsx  ← ADD
-    │   └── AdvicePage.css  ← ADD
-    │
-    ├── components/
-    │   ├── CalendarView.jsx    ← ADD
-    │   ├── CalendarView.css    ← ADD
-    │   ├── HormonesView.jsx    ← ADD
-    │   └── HormonesView.css    ← ADD
-    │
-    └── utils/              ← CREATE this folder, add all 5 files
-        ├── dataModels.js
-        ├── cycleCalculator.js
-        ├── storageLayer.js
-        ├── labParser.js
-        └── aiInsights.js
-```
+# INRUCTIONS
 
-You need to manually create two folders that Vite doesn't make:
-```bash
-mkdir src/pages
-mkdir src/components
-mkdir src/utils
-```
-
-## Run it
-
-```bash
-npm run dev
-```
-
-Opens at http://localhost:5173
-
-## Deploy to Vercel (for Devpost)
-
-```bash
-npm install -g vercel
-vercel
-```
-
-Follow the prompts — it gives you a live URL in ~60 seconds.
-
-## Wiring up the Claude API
-
-The app runs fully with mock data right now. When you're ready to connect
-the real AI and lab parser:
-
-1. Create a `.env` file in the root:
-   ```
-   VITE_ANTHROPIC_KEY=sk-ant-your-key-here
-   ```
-
-2. In `HormonesView.jsx`, uncomment the labParser import and replace the mock.
-
-3. In `AdvicePage.jsx`, uncomment the getInsights import and replace the mock.
-
-The comments marked `── WIRE UP:` show exactly where to make these changes.
+# cd into BigSis-App dir
+# run: npm run dev -- --host
